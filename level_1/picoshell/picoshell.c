@@ -67,6 +67,7 @@ int main()
 {
     char *cmd1[] = {"echo", "alooo", NULL};
     char *cmd2[] = {"ls", NULL};
-    char **cmds[] = {cmd1, NULL};
+    char **cmds[] = {cmd1, cmd2, NULL};
     picoshell(cmds);
+    while(1){}
 }
