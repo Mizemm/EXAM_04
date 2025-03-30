@@ -1,58 +1,44 @@
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
-#include <sys/wait.h>
 
-int ft_popen(const char *file, char *const argv[], char type)
+int ft_popen(const char *file, const char *argv[], char type)
 {
-    pid_t pid;
-    int fd[2];
+    if (!file || !argv || (type != 'r' && type != 'w'))
+        return -1;
 
-    if (!file || !argv || (type != 'r' && type != 'w') || pipe(fd) == -1)
+    int fd[2];
+    if (pipe(fd) == -1)
         return -1;
-    pid = fork();
-    if (pid < 0)
-    {
+
+    pid_t pid = fork();
+    if (pid == -1) {
         close(fd[0]);
         close(fd[1]);
         return -1;
     }
-    if (pid == 0)
-    {
-        if (type == 'r')
-        {
-            close(fd[0]);
-            if (dup2(fd[1], 1) == -1)
-                exit(-1);
-        }
-        else if (type == 'w')
-        {
+    if (pid == 0) {  // Child process
+        if (type == 'r') {
+            close(fd[0]);          // Close unused read end
+            dup2(fd[1], STDOUT_FILENO);
             close(fd[1]);
-            if (dup2(fd[0], 0) == -1)
-                exit(-1);
+        } else {  // type == 'w'
+            close(fd[1]);          // Close unused write end
+            dup2(fd[0], STDIN_FILENO);
+            close(fd[0]);
         }
-        close(fd[0]);
-        close(fd[1]);
-        if (execvp(file, argv) == -1)
-            exit(-1);
+        execvp(file, (char *const *)argv);
+        exit(-1);  // Only reached if execvp fails
     }
-    int tmp_fd;
-    if (type == 'r') 
-    {
-        close(fd[1]);
-        tmp_fd = fd[0];
-        close (fd[0]);
-        return tmp_fd;
+    if (type == 'r') {
+        close(fd[1]);  // Close write end in parent
+        return fd[0];  // Return read end
+    } else {  // type == 'w'
+        close(fd[0]);  // Close read end in parent
+        return fd[1];  // Return write end
     }
-    else if (type == 'w') 
-    {
-        close(fd[0]);
-        tmp_fd = fd[1];
-        close(fd[1]);
-        return tmp_fd;
-    }
-    return 0;
 }
+
 int main() 
 {
     printf("fd : %d\n", ft_popen("ls", (char *const[]){"ls", NULL}, 'r'));
