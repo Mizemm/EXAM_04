@@ -1,10 +1,12 @@
+#ifndef ARGO_H
+# define ARGO_H
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <ctype.h>
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 
-//this file is given in the exam
 
 typedef struct	json {
 	enum {
@@ -28,4 +30,10 @@ typedef struct	pair {
 }	pair;
 
 void	free_json(json j);
-int	argo(json *dst, FILE *stream);
+int		argo(json *dst, FILE *stream);
+int	peek(FILE *stream);
+void	unexpected(FILE *stream);
+int	accept(FILE *stream, char c);
+int	expect(FILE *stream, char c);
+
+#endif

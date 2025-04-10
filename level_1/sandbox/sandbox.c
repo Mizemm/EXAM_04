@@ -1,40 +1,43 @@
 #include <stdbool.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <errno.h>
 #include <signal.h>
 #include <string.h>
-#include <sys/wait.h>
+#include <stdlib.h>
 #include <sys/types.h>
+#include <sys/wait.h>
+#include <errno.h>
 
-// void do_nothing(int sig)
-// {
-// 	(void)sig;
-// }
+void do_nothing(int sig)
+{
+	(void)sig;
+}
 
 int	sandbox(void (*f)(void), unsigned int timeout, bool verbose)
 {
 	pid_t pid = fork();
 
-	if (pid < 0)
+	if (pid == -1)
 		return (-1);
 	if (pid == 0)
 	{
-		alarm(timeout); 
+		alarm(timeout);
 		f();
 		exit(0);
 	}
 
-	// struct sigaction sa;
-	// sa.sa_handler = do_nothing;
-	// sa.sa_flags = 0;
-	// sigemptyset(&sa.sa_mask);
-	// sigaction(SIGALRM, &sa, NULL);
+	struct sigaction sa;
+
+	sa.sa_handler = do_nothing;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGALRM, &sa, NULL);
+
+	alarm(timeout);
 
 	int st;
 	pid_t r = waitpid(pid, &st, 0);
-	
+
 	if (r == -1)
 	{
 		if (errno == EINTR)
