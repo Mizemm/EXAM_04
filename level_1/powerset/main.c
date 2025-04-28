@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void sort(int *arr, int size)
+void sort(int *set, int size)
 {
     for (int i = 0; i < size - 1; i++)
     {
         for (int j = 0; j < size - i - 1; j++)
         {
-            if (arr[j] > arr[j + 1])
+            if (set[j] > set[j + 1])
             {
-                int tmp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = tmp;
+                int tmp = set[j];
+                set[j] = set[j + 1];
+                set[j + 1] = tmp;
             }
         }
     }
@@ -22,17 +22,20 @@ void print_subset(int *subset, int size)
     for (int i = 0; i < size; i++)
     {
         printf("%d", subset[i]);
-        if (i < size - 1) printf(" ");
+        if (i < size - 1)
+            printf(" ");
     }
     printf("\n");
 }
 
-void find_subsets(int *set, int set_size, int target_sum, int *subset, int subset_size, int index) {
+void find_subsets(int *set, int set_size, int target_sum, int *subset, int subset_size, int index)
+{
     int sum = 0;
     for (int i = 0; i < subset_size; i++) 
         sum += subset[i];
     if (sum == target_sum)
         print_subset(subset, subset_size);
+
 
     for (int i = index; i < set_size; i++)
     {
@@ -48,11 +51,18 @@ int main(int argc, char *argv[])
     if (argc < 3)
         return 1;
 
+
+
+    
     int target_sum = atoi(argv[1]);
     int set_size = argc - 2;
     int *set = malloc(set_size * sizeof(int));
     if (!set)
         exit(1);
+
+
+
+
     for (int i = 0; i < set_size; i++)
         set[i] = atoi(argv[i + 2]);
     sort(set, set_size);
@@ -62,6 +72,9 @@ int main(int argc, char *argv[])
         free(set);
         exit(1);
     }
+
+
+
     find_subsets(set, set_size, target_sum, subset, 0, 0);
     free(set);
     free(subset);
