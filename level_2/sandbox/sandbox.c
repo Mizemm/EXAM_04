@@ -1,12 +1,13 @@
-#include <stdbool.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <signal.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#include <signal.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <errno.h>
 
 void do_nothing(int sig)
 {
@@ -16,7 +17,6 @@ void do_nothing(int sig)
 int	sandbox(void (*f)(void), unsigned int timeout, bool verbose)
 {
 	pid_t pid = fork();
-
 	if (pid == -1)
 		return (-1);
 	if (pid == 0)
@@ -26,16 +26,22 @@ int	sandbox(void (*f)(void), unsigned int timeout, bool verbose)
 		exit(0);
 	}
 
+
+
+
 	struct sigaction sa;
 	sa.sa_handler = do_nothing;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGALRM, &sa, NULL);
-	alarm(timeout);
 
+
+
+
+
+	alarm(timeout);
 	int st;
 	pid_t r = waitpid(pid, &st, 0);
-
 	if (r == -1)
 	{
 		if (errno == EINTR)

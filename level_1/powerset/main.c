@@ -1,6 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void print_subset(int *subset, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        printf("%d", subset[i]);
+        if (i < size - 1)
+            printf(" ");
+    }
+    printf("\n");
+}
+
 void sort(int *set, int size)
 {
     for (int i = 0; i < size - 1; i++)
@@ -17,16 +28,6 @@ void sort(int *set, int size)
     }
 }
 
-void print_subset(int *subset, int size)
-{
-    for (int i = 0; i < size; i++)
-    {
-        printf("%d", subset[i]);
-        if (i < size - 1)
-            printf(" ");
-    }
-    printf("\n");
-}
 
 void find_subsets(int *set, int set_size, int target_sum, int *subset, int subset_size, int index)
 {

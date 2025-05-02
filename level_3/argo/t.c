@@ -115,124 +115,118 @@ void	serialize(json j)
 
 char *get_str(FILE *stream)
 {
-	char *res = calloc(4096, sizeof(char));
-	int i = 0;
-	char c = getc(stream);
+    char *res = calloc(4096, sizeof(char));
+    int i = 0;
+    char c = getc(stream);
 
-	while (1)
-	{
-		c = getc(stream);
-		
-		if (c == '"')
-			break ;
-		if (c == EOF)
-		{
-			unexpected(stream);
-			return NULL;
-		}
-		if (c == '\\')
-			c = getc(stream);
-		res[i++] = c;
-	}
-	return (res);
+    while (1)
+    {
+        c = getc(stream);
+        if (c == '"')
+            break;
+        if (c == EOF)
+        {
+            unexpected(stream);
+            return NULL;
+        }
+        if (c == '\\')
+            c = getc(stream);
+        res[i++] = c;
+    }
+    return res;
 }
-int	parse_int(json *dst, FILE *stream)
+
+int parse_int(json *dst, FILE *stream)
 {
-	int n = 0;
-
-	fscanf(stream, "%d", &n);
-	dst->type = INTEGER;
-	dst->integer = n;
-	return (1);
+    int n = 0;
+    fscanf(stream, "%d", &n);
+    dst->type = INTEGER;
+    dst->integer = n;
+    return 1;
 }
-
 
 int parse_map(json *dst, FILE *stream)
 {
-	dst->type = MAP;
-	dst->map.size = 0;
-	dst->map.data = NULL;
-	char c = getc(stream);
-	if (peek(stream) == '}')
-		return 1;
-
-	while (1)
-	{
-		c = peek(stream);
-		if (c != '"')
-		{
-			unexpected(stream);
-			return -1;
-		}
-		dst->map.data = realloc(dst->map.data, (dst->map.size + 1) * sizeof(pair));
-		pair *current = &dst->map.data[dst->map.size];
-		current->key = get_str(stream);
-		if (current->key == NULL)
-			return -1;
-		dst->map.size++;
+    char c = getc(stream);
+    dst->type = MAP;
+    dst->map.data = NULL;
+    dst->map.size = 0;
+    if (peek(stream) == '}')
+        return 1;
 
 
-
-		if (expect(stream, ':') == 0)
-			return -1;
-		if (argo(&current->value, stream) == -1)
-			return -1;
-		c = peek(stream);
-		if (c == '}')
-		{
-			accept(stream ,c);
-			break ;
-		}
-		if (c == ',')
-			accept(stream, c);
-		else
-		{
-			unexpected(stream);
-			return -1;
-		}
-	}
-	return 1;
+    while (1)
+    {
+        c = peek(stream);
+        if (c != '"')
+        {
+            unexpected(stream);
+            return -1;
+        }
+        dst->map.data = realloc(dst->map.data, (dst->map.size + 1) * sizeof(pair));
+        pair *current = &dst->map.data[dst->map.size];
+        current->key = get_str(stream);
+        if (!current->key)
+            return -1;
+        
+        if (!expect(stream, ':') || argo(&current->value, stream) == -1)
+            return -1;
+        c = peek(stream);
+        if (c == '}')
+        {
+            accept(stream, c);
+            break;
+        }
+        if (c == ',')
+            accept(stream, c);
+        else
+        {
+            unexpected(stream);
+            return -1;
+        }
+    }
+    return 1;
 }
+
 
 int parser(json *dst, FILE *stream)
 {
-	int c = peek(stream);
+    int c = peek(stream);
 
-	if (c == EOF)
-	{
-		unexpected(stream);
-		return -1;
-	}
-	if (isdigit(c))
-		return (parse_int(dst, stream));
+    if (c == EOF)
+    {
+        unexpected(stream);
+        return -1;
+    }
+    if (isdigit(c))
+        return(parse_int(dst, stream));
 
-		
-
-
-	else if (c == '"')
-	{
-		dst->type = STRING;
-		dst->string = get_str(stream);
-		if (dst->string == NULL)
-			return (-1);
-		return (1);
-	}
-	else if (c == '{')
-		return (parse_map(dst, stream));
-	else
-	{
-		unexpected(stream);
-		return -1;
-	}
-	return (1);
+    else if (c == '"')
+    {
+        dst->type = STRING;
+        dst->string = get_str(stream);
+        if (!dst->string)
+            return -1;
+        return 1;
+    }
+    else if (c == '{')
+        return parse_map(dst, stream);
+    else
+    {
+        unexpected(stream);
+        return -1;
+    }
+    return 1;
 }
+
 
 int argo(json *dst, FILE *stream)
 {
-	if (parser(dst, stream) == -1)
-		return -1;
-	return 1;
+    if (parser(dst, stream) == -1)
+        return -1;
+    return 1;
 }
+
 
 int	main(int argc, char **argv)
 {

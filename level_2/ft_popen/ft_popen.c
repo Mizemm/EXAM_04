@@ -7,10 +7,13 @@ int	ft_popen(const char *file, char *const argv[], char type)
 	if (!file || !argv || (type != 'r' && type != 'w'))
 		return -1;
 
-	int fd[2];
-	int status;
 
+
+	int fd[2];
 	pipe(fd);
+
+
+	
 	if (type == 'r')
 	{
 		if (fork() == 0)
