@@ -12,23 +12,6 @@ void print_subset(int *subset, int size)
     printf("\n");
 }
 
-void sort(int *set, int size)
-{
-    for (int i = 0; i < size - 1; i++)
-    {
-        for (int j = 0; j < size - i - 1; j++)
-        {
-            if (set[j] > set[j + 1])
-            {
-                int tmp = set[j];
-                set[j] = set[j + 1];
-                set[j + 1] = tmp;
-            }
-        }
-    }
-}
-
-
 void find_subsets(int *set, int set_size, int target_sum, int *subset, int subset_size, int index)
 {
     int sum = 0;
