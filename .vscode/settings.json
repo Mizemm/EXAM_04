@@ -2,6 +2,7 @@
     "files.associations": {
         "stdbool.h": "c",
         "stdio.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "ctype.h": "c"
     }
 }
