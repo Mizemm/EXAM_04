@@ -1,5 +1,3 @@
-//still not 100% valid in exam
-
 #include <stdio.h>
 
 void solve(char *str, int pos, int open, int to_remove, char *tmp)
@@ -18,6 +16,10 @@ void solve(char *str, int pos, int open, int to_remove, char *tmp)
         tmp[pos] = ' ';
         solve(str, pos + 1, open, to_remove - 1, tmp);
     }
+
+
+
+
     if (str[pos] == '(')
     {
         tmp[pos] = '(';
@@ -31,6 +33,11 @@ void solve(char *str, int pos, int open, int to_remove, char *tmp)
             solve(str, pos + 1, open - 1, to_remove, tmp);
         }
     }
+
+
+
+
+    
     else
     {
         tmp[pos] = str[pos];
@@ -40,11 +47,18 @@ void solve(char *str, int pos, int open, int to_remove, char *tmp)
 
 int total_removals(char *str)
 {
-    int open = 0, close = 0;
+    int open = 0;
+    int close = 0;
     for (int i = 0; str[i]; i++)
     {
         if (str[i] == '(')
             open++;
+
+
+
+
+
+            
         else if (str[i] == ')')
         {
             if (open > 0)

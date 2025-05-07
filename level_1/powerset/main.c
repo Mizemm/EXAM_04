@@ -29,7 +29,7 @@ void sort(int *set, int size)
 }
 
 
-void find_subsets(int *set, int set_size, int target_sum, int *subset, int subset_size, int index)
+void findint *set, int set_size, int target_sum, int *subset, int subset_size, int index)
 {
     int sum = 0;
     for (int i = 0; i < subset_size; i++) 

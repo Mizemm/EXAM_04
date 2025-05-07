@@ -9,9 +9,9 @@ int picoshell(char **cmds[])
     int res = 0;
     int i = 0;
     int prv_fd = -1;
+    int st;
     int fd[2];
     pid_t pid;
-    int st;
     
     
     while (cmds[i])
@@ -19,13 +19,13 @@ int picoshell(char **cmds[])
         if(cmds[i + 1])
             pipe(fd);
         pid = fork();
-        if( pid == -1)
+        if(pid == -1)
             return 1;
 
 
 
 
-        if (!pid)
+        if (pid == 0)
         {
             if(prv_fd != -1)
             {
@@ -46,7 +46,7 @@ int picoshell(char **cmds[])
     
         while (wait(&st) == -1)
         {
-            if(WIFEXITED(st) && WEXITSTATUS(st) != 0)
+            if(WIFEXITED(st) && WEXITSTATUS(st) == 0)
                 res = 1;
         }
         if(prv_fd != -1)
@@ -54,9 +54,16 @@ int picoshell(char **cmds[])
         if(cmds[i + 1])
         {
             close(fd[1]);
-            pr_fd = fd[0];
+            prv_fd = fd[0];
         }
         i++;
     }
     return res;
+}
+
+int main()
+{
+    char *c[] = {"ls", NULL};
+    char **cmds[] = {c, NULL};
+    printf("<%d>\n", picoshell(cmds));
 }

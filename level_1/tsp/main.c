@@ -2,11 +2,14 @@
 //tsp - calculate_path_length - swap - permute
 
 #include <stdio.h>
-#include <errno.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
 #include <stdbool.h>
+
+
+
+#include <errno.h>
+#include <math.h>
 #include <float.h>
 
 float    distance(float a[2], float b[2])
@@ -14,6 +17,12 @@ float    distance(float a[2], float b[2])
     return sqrtf((b[0] - a[0]) * (b[0] - a[0]) + (b[1] - a[1]) * (b[1] - a[1]));
 }
 
+void swap(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
 float calculate_path_length(float (*array)[2], int *perm, ssize_t size)
 {
     float length = 0.0f;
@@ -24,12 +33,6 @@ float calculate_path_length(float (*array)[2], int *perm, ssize_t size)
     return length;
 }
 
-void swap(int *a, int *b)
-{
-    int tmp = *a;
-    *a = *b;
-    *b = tmp;
-}
 
 void permute(int *perm, ssize_t start, ssize_t size, float (*array)[2], float *min_path)
 {
