@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 
-
+ 
 #include <errno.h>
 #include <math.h>
 #include <float.h>
@@ -26,25 +26,33 @@ void swap(int *a, int *b)
 float calculate_path_length(float (*array)[2], int *perm, ssize_t size)
 {
     float length = 0.0f;
-    for (ssize_t i = 0; i < size - 1; i++) {
+    for (ssize_t i = 0; i < size - 1; i++)
         length += distance(array[perm[i]], array[perm[i + 1]]);
-    }
+
+
+
     length += distance(array[perm[size - 1]], array[perm[0]]);
     return length;
 }
 
-
-void permute(int *perm, ssize_t start, ssize_t size, float (*array)[2], float *min_path)
+void permute(float (*array)[2], int *perm, ssize_t size, ssize_t start, float *min_path)
 {
-    if (start == size) {
+    if (start == size)
+    {
         float path_length = calculate_path_length(array, perm, size);
         if (path_length < *min_path)
             *min_path = path_length;
         return;
     }
-    for (ssize_t i = start; i < size; i++) {
+
+
+
+
+
+    for (ssize_t i = start; i < size; i++)
+    {
         swap(&perm[start], &perm[i]);
-        permute(perm, start + 1, size, array, min_path);
+        permute(array, perm, size, start + 1, min_path);
         swap(&perm[start], &perm[i]);
     }
 }
@@ -53,18 +61,20 @@ float tsp(float (*array)[2], ssize_t size)
 {
     if (size < 2)
         return 0.0f;
-
     int *perm = malloc(sizeof(int) * size);
-    if (!perm) {
+    if (!perm)
+    {
         perror("malloc");
         return 0.0f;
     }
 
+
+
+
     for (ssize_t i = 0; i < size; i++)
         perm[i] = i;
-
     float shortest_length = FLT_MAX;
-    permute(perm, 0, size, array, &shortest_length);
+    permute(array, perm, size, 0, &shortest_length);
     free(perm);
     return shortest_length;
 }
